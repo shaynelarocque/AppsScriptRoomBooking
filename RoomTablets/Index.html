@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Placeholder Conference Room Name</title>
+      <link rel="stylesheet" href="[Replace: URL to font files]">
+      <style>
+         @font-face {
+         font-family: "aktiv-grotesk", sans-serif;
+         font-weight: 800;
+         font-style: normal;
+         font-family: "obvia-wide", sans-serif;
+         font-weight: 600;
+         font-style: normal;
+         font-family: "lores-9-plus-narrow", sans-serif;
+         font-weight: 700;
+         font-style: normal;
+         }
+         body {
+         min-height: 100vh;
+         min-width: 100vw;
+         max-height: 100vh;
+         max-width: 100vw;
+         font-family: "aktiv-grotesk", sans-serif;
+         background-color: #000;
+         color: #fff;
+         overflow: hidden;
+         margin: 0;
+         }
+         html,
+         #container-content {
+         height: 100%;
+         max-height: 100%;
+         }
+         #status-background {
+         position: fixed;
+         bottom: 0;
+         height: 30vh;
+         width: calc(100% - 1em);
+         border: 3px solid black;
+         box-shadow: 0.3rem 0.4rem 0 0 rgba(0, 0, 0, 1);
+         padding: 0.5em;
+         box-sizing: border-box;
+         background: white;
+         margin: 0.5em;
+         }
+         #container-content {
+         width: 100%;
+         height: 100%;
+         display: flex;
+         flex-direction: row;
+         z-index: 2;
+         position: relative;
+         align-items: center;
+         }
+         #qrcode {
+         max-width: 25vh;
+         height: 25vh;
+         background-color: white;
+         padding: 0.35em;
+         border: 3px solid black;
+         z-index: 3;
+         }
+         #status-container {
+         height: 100%;
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         justify-content: space-between;
+         align-items: flex-start;
+         margin-left: 0.5em;
+         }
+         #status-roomname {
+         flex: 0 1 auto;
+         font-size: 2vw;
+         font-weight: 300;
+         color: black;
+         margin: 0;
+         margin-left: 0.25em;
+         background-color: white;
+         padding: 0.1em;
+         padding-left: 0.7em;
+         padding-right: 0.7em;
+         border: 3px solid black;
+         }
+         #status-large {
+         flex: 1 1 auto;
+         text-transform: uppercase;
+         font-weight: bold;
+         color: black;
+         font-size: 10vw;
+         line-height: 0.9em;
+         margin: 0;
+         padding-bottom: 0;
+         }
+         #status-small {
+         flex: 0 1 auto;
+         color: black;
+         font-size: 3vw;
+         margin: 0;
+         margin-left: 0.25em;
+         }
+         #check-in-container {
+         right: 0;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         }
+         #room-image {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100vh;
+         z-index: -2;
+         }
+         #room-image img {
+         width: 100%;
+         height: 100vh;
+         object-fit: cover;
+         }
+         #overlay-red,
+         #overlay-green,
+         #overlay-yellow {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         z-index: 1;
+         display: none;
+         }
+         #overlay-red {
+         background-color: rgba(238, 70, 35, 0.75);
+         }
+         #overlay-green {
+         background-color: rgba(35, 238, 56, 0.75);
+         }
+         #overlay-yellow {
+         background-color: rgba(238, 235, 35, 0.75);
+         }
+         button {
+         padding: 1em;
+         background: #EE4623;
+         width: 13em;
+         height: 6em;
+         font-size: 1.25em;
+         font-weight: 900;
+         color: white;
+         border: 3px solid black;
+         box-shadow: 0.5em 0.5em black;
+         cursor: pointer;
+         margin-right: 0.5em;
+         }
+         button:active {
+         transform: translate(.5em, .5em);
+         box-shadow: 0.15em 0.15em black;
+         }
+         .button-disabled {
+         background: gray !important;
+         pointer-events: none !important;
+         transform: translate(.5em, .5em);
+         box-shadow: 0.15em 0.15em black;
+         }
+         /* Media query for smaller screens */
+         @media only screen and (max-width: 1024px) {
+         #status-large {
+         font-size: 10vw;
+         }
+         #status-small #next-up #status-roomname {
+         font-size: 3vw;
+         }
+         }
+         #refresh-button {
+         position: absolute;
+         border: 3px solid black;
+         top: 10px;
+         right: 10px;
+         width: 50px;
+         height: 50px;
+         background-color: #fff;
+         cursor: pointer;
+         z-index: 9998;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         transition: all 0.5s ease;
+         }
+         #refresh-icon {
+         width: 50%;
+         height: 50%;
+         object-fit: contain;
+         }
+         #refresh-button.expanding {
+         width: 100vw;
+         height: 100vh;
+         border-radius: 0;
+         top: 0;
+         right: 0;
+         border: 0;
+         }
+         #fun-fact-container {
+         z-index: 10000;
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         color: black;
+         text-align: center;
+         }
+      </style>
+   </head>
+   <body>
+      <audio id="buttonSound"
+         src="[Replace: URL to Sound File]"
+         preload="auto"></audio>
+      <div id="fun-fact-container" style="display: none;">
+         <h1 id="fun-fact">Refreshing...
+         </h1>
+         <h1 id="fun-fact">Fun fact: This was made by District 3's Web Development Team!
+         </h1>
+      </div>
+      <div id="refresh-button">
+         <img id="refresh-icon" src="[Replace: URL to refresh icon]" alt="Refresh Icon">
+      </div>
+      <div id="status-background">
+         <div id="container-content">
+            <img id="qrcode" src="[Replace: URL to QR Code for booking agent's schedule page]" alt="QR Code">
+            <div id="status-container">
+               <p id="status-roomname">📍 Placeholder Conference Room</p>
+               <p id="status-large">Loading...</p>
+               <p id="status-small"></p>
+               <p id="next-up"></p>
+            </div>
+            <div id="end-meeting-container" style="display: none;">
+               <button id="end-meeting-button">
+               <span class="shadow"></span>
+               <span class="edge"></span>
+               <span class="front">
+               Meeting Complete
+               </span>
+               </button>
+            </div>
+            <div id="check-in-container" style="display: none;">
+               <button id="check-in-button">
+               <span class="shadow"></span>
+               <span class="edge"></span>
+               <span class="front">
+               Check in
+               </span>
+            </div>
+         </div>
+         <div id="overlay-red"></div>
+         <div id="overlay-green"></div>
+         <div id="overlay-yellow"></div>
+      </div>
+      <div id="room-image">
+         <img src="" alt="Room Image">
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script>
+         const buttonSound = document.getElementById('buttonSound');
+         let currentEventId = null;
+             
+         function handleError(error) {
+           console.error(error); // Log the error to the console for debugging
+           document.getElementById('status').innerText = 'Error fetching status';
+           document.getElementById('overlay-red').style.display = "block";
+           document.getElementById('overlay-green').style.display = "none";
+         }
+         
+         function updateStatus() {
+         google.script.run.withSuccessHandler(function(result) {
+         console.log('Received result:', result);  // Log the received result
+         
+         document.querySelector('#next-up').style.display = "";  // Reset "Next up" text display
+         
+         if(result.status === "Free all day" && result.timeUntilNext === "Free all day") {
+           document.querySelector('#status-large').innerHTML = "FREE";
+           document.querySelector('#status-small').innerHTML = "All day";
+         
+           console.log('Entering green state');  // Log when entering green state
+           document.getElementById('overlay-green').style.display = "block";
+           document.getElementById('overlay-red').style.display = "none";
+           document.getElementById('overlay-yellow').style.display = "none";
+           document.getElementById('check-in-container').style.display = "none";
+           document.getElementById('end-meeting-container').style.display = "none";
+         } else if (result.status.includes("Currently booked by")) {
+           let organizerName = result.status.split(" ")[3];  // Extract the organizer name from the status
+         
+           document.querySelector('#status-large').innerHTML = "BOOKED";
+           document.querySelector('#status-small').innerHTML = organizerName + " until " + result.bookingEnd;
+         
+           console.log('Entering red state');  // Log when entering red state
+           document.getElementById('overlay-red').style.display = "block";
+           document.getElementById('overlay-green').style.display = "none";
+           document.getElementById('overlay-yellow').style.display = "none";
+           document.getElementById('check-in-container').style.display = "none";
+           document.getElementById('end-meeting-container').style.display = "block";
+         } else {
+           let untilTime = result.timeUntilNext;
+           let organizerName = result.nextOrganizer;
+           if (result.status.includes("Check in for")) {
+             untilTime = result.status.split(" ")[5] + " " + result.status.split(" ")[6];  // Extract the check-in time from the status
+             document.querySelector('#status-large').innerHTML = "CHECK IN";
+             document.querySelector('#status-small').innerHTML = "For " + organizerName + " by " + untilTime;
+             document.querySelector('#next-up').style.display = "none";  // Hide the "Next up" text
+             console.log('Entering yellow state');  // Log when entering yellow state
+             document.getElementById('overlay-yellow').style.display = "block";
+             document.getElementById('overlay-red').style.display = "none";
+             document.getElementById('overlay-green').style.display = "none";
+             document.getElementById('check-in-container').style.display = "block";
+             document.getElementById('end-meeting-container').style.display = "none";
+           } else {
+             document.querySelector('#status-large').innerHTML = "FREE";
+             document.querySelector('#status-small').innerHTML = "Until " + organizerName + " at " + untilTime;
+             console.log('Entering green state');  // Log when entering green state
+             document.getElementById('overlay-green').style.display = "block";
+             document.getElementById('overlay-red').style.display = "none";
+             document.getElementById('overlay-yellow').style.display = "none";
+             document.getElementById('check-in-container').style.display = "none";
+             document.getElementById('end-meeting-container').style.display = "none";
+           }
+         }
+         currentEventId = result.currentEventId;
+         }).getCalendarStatus();
+         }
+         
+         function checkIn() {
+         if (currentEventId) {
+         console.log('Calling checkIn function with currentEventId:', currentEventId);
+         
+         const checkInButton = document.querySelector('#check-in-button');
+         checkInButton.classList.add('button-disabled');
+         checkInButton.innerText = "Loading...";
+         
+         google.script.run.withSuccessHandler(function() {
+           updateStatus();
+           
+           setTimeout(function() {
+             // Revert the check-in button to its original state and text
+             checkInButton.classList.remove('button-disabled');
+             checkInButton.innerText = "Check in";
+           }, 3000);
+         }).checkIn(currentEventId);
+         } else {
+         console.log('No current event to check in');
+         }
+         }
+         
+         function endMeeting() {
+         if (currentEventId) {
+         console.log('Calling deleteCurrentEvent function with currentEventId:', currentEventId);
+         
+         const endMeetingButton = document.querySelector('#end-meeting-button');
+         endMeetingButton.classList.add('button-disabled');
+         endMeetingButton.innerText = "Loading...";
+         
+         google.script.run.withSuccessHandler(function() {
+           updateStatus();
+           
+           setTimeout(function() {
+             endMeetingButton.classList.remove('button-disabled');
+             endMeetingButton.innerText = "Meeting Complete";
+           }, 3000);
+         }).deleteCurrentEvent(currentEventId);
+         } else {
+         console.log('No current event to end');
+         }
+         }
+         
+         function setUpdateInterval() {
+         const now = new Date();
+         const delay = (5 - (now.getMinutes() % 5)) * 60 * 1000; // Time until next 5-minute mark
+         setTimeout(function() {
+         updateStatus(); // Force update on launch
+         setInterval(updateStatus, 5 * 60 * 1000); // Update every 5 minutes
+         }, delay);
+         }
+         
+         let gifURLs = [
+         "[Replace: URL to GIF #1]",
+         "[Replace: URL to GIF #2]"
+         //... add more URLs as needed (make sure the last link does not have a comma after!)
+         ];
+         
+         function changeBackground() {
+         console.log('Changing background...');
+         let randomIndex = Math.floor(Math.random() * gifURLs.length);
+         let selectedGif = gifURLs[randomIndex];
+         let imgElement = document.querySelector('#room-image img');
+         imgElement.src = selectedGif;
+         }
+         
+         $(document).ready(function() {
+         changeBackground();
+         setInterval(changeBackground, 5 * 60 * 1000); // 5 * 60 * 1000 ms = 5 minutes
+         updateStatus(); // Force update on launch
+         setUpdateInterval(); // initial setup
+         document.querySelector('#check-in-button').addEventListener('click', function() {
+         buttonSound.play();
+         checkIn();
+         });
+         document.querySelector('#end-meeting-button').addEventListener('click', function() {
+         buttonSound.play();
+         endMeeting();
+         });
+         const refreshButton = document.querySelector('#refresh-button');
+         const refreshIcon = document.querySelector('#refresh-icon');
+         refreshButton.addEventListener('click', function() {
+         refreshIcon.style.display = 'none';
+         refreshButton.classList.add('expanding');
+         console.log('Refreshing data');
+         updateStatus(); 
+         setTimeout(function() {
+         document.getElementById('fun-fact-container').style.display = 'block';
+         }, 500);
+         setTimeout(function() {
+         refreshIcon.style.display = 'initial';
+         }, 4500);
+         setTimeout(function() {
+         refreshButton.classList.remove('expanding');
+         document.getElementById('fun-fact-container').style.display = 'none';
+         }, 4000);
+         });
+         
+         });
+      </script>
+   </body>
+</html>
