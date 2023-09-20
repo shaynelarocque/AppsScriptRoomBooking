@@ -42,9 +42,19 @@ We needed a solution that provided unlimited user accounts due to our constant f
     - A changing background image.
 
 # Setup
+## For Booking Agents
 1. Create your Google Form. This form should collect Email, First Name, and Last Name.
 2. Create the Google Sheet that will be used to store the form responses. This sheet should have two tabs: 'Form Responses' and 'Bookings'. 'Form Responses' should have column B be user's emails, and column H be a checkbox for whether or not they are an approved user.
-3. Create a Google Workspace account for your first room. Share the resource calendar of the room with this account with the permission "Make changes to events" permission. Create a Google Apps Script project with the code in the BookingAgent folder (Configured to your setup). Create a trigger for the main() function that runs on calendar changes. Optional: Create a Google Apps Script project with the code in the RoomTablets folder and deploy it as a Web App. (If you choose to do this, you will need to create an iframe in the HTML file that points to the Web App URL).
+3. Create a Google Workspace account for your first room. Share the resource calendar of the room with this account with the permission "Make changes to events" permission. Create a Google Apps Script project with the code in the BookingAgent folder (Configured to your setup). Create a trigger for the main() function that runs on calendar changes.
 4. Create an Appointment Schedule for the newly created account. Configure it to look for conflicts in both the account's calendar and the room's resource calendar.
 5. Embed the account's Appointment Schedules whereever you desire, and share the link with your users.
 6. Repeat for all rooms/resources you want bookable.
+## For Account Manager
+1. On a new Google Workspace account, open the newly created Google Sheet which the form submissions are dumped in to. Click on Extensions -> Apps Script. Create a new project containing the code in the AccountManager folder, triggering sendEmails() hourly. 
+## For Tablet Displays
+1. On each room's workspace account you want to have a tablet display, create a separate Apps Script project containing the code from the RoomTablets folder. Configure it to your setup and modify styling as you wish.
+2. Deploy as a web app
+3. Optional: To remove the warning banner Google places on all web apps, host a simple html file containing the code in the iframe folder, configured to display this newly created web app.
+4. Open the website on a fullscreen browser on tablet. I use https://play.google.com/store/apps/details?id=de.allnet.allnetfullscreenbrowser
+## For Dashboard
+1. Same as Tablet Displays, except on a new workspace account.
