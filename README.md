@@ -39,6 +39,7 @@ We needed a solution that provided unlimited user accounts due to our constant f
     - A list of events happening in the next 5 days.
     - A clock.
     - A feature of a random startup from the database.
+    - A changing background image.
 
 # Setup
 1. Create your Google Form. This form should collect Email, First Name, and Last Name.
