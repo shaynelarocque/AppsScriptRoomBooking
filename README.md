@@ -28,8 +28,9 @@ We needed a solution that provided unlimited user accounts due to our constant f
 - Another Google Workspace account runs the script in the AccountManager folder (Created attached to the sheet via clicking Extensions -> Apps Script on the sheet). This handles sending out acceptance/denial emails to users who sign up for the platform.
 
 # Setup
-1. Create your Google Form. This form should collect Email, First Name, Last Name
+1. Create your Google Form. This form should collect Email, First Name, and Last Name.
 2. Create the Google Sheet that will be used to store the form responses. This sheet should have two tabs: 'Form Responses' and 'Bookings'. 'Form Responses' should have column B be user's emails, and column H be a checkbox for whether or not they are an approved user.
-3. Create a Google Workspace account for your first room. Share the resource calendar of the room with this account with the permission "Make changes to events" permission. Create a Google Apps Script project with the code in the BookingAgent folder (Configured to your setup). Create a trigger for the main() function that runs on calendar changes. Optional: Create a Google Apps Script project with the code in the RoomTablets folder and deploy it as a Web App.
+3. Create a Google Workspace account for your first room. Share the resource calendar of the room with this account with the permission "Make changes to events" permission. Create a Google Apps Script project with the code in the BookingAgent folder (Configured to your setup). Create a trigger for the main() function that runs on calendar changes. Optional: Create a Google Apps Script project with the code in the RoomTablets folder and deploy it as a Web App. (If you choose to do this, you will need to create an iframe in the HTML file that points to the Web App URL).
 4. Create an Appointment Schedule for the newly created account. Configure it to look for conflicts in both the account's calendar and the room's resource calendar.
-5. Repeat for all rooms/resources you want bookable.
+5. Embed the account's Appointment Schedules whereever you desire, and share the link with your users.
+6. Repeat for all rooms/resources you want bookable.
