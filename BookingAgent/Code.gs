@@ -43,7 +43,7 @@ function syncSecondaryWithBookings() {
   var events = secondaryCal.getEvents(now, sevenDaysFromNow);
 
   var sheet = SpreadsheetApp.openById(config.sheetId).getSheetByName('Bookings');
-  var bookings = sheet.getRange('A2:E' + sheet.getLastRow()).getValues(); // Adjusted to include column E
+  var bookings = sheet.getRange('A2:E' + sheet.getLastRow()).getValues();
 
   var eventIds = events.map(event => event.getId());
   var bookingIds = bookings.map(booking => booking[3]);
