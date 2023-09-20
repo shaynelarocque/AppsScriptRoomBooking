@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Realtime D3 Data</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="font URL">
+  <style>
+    @font-face {
+      font-family: "aktiv-grotesk", sans-serif;
+      font-weight: 800;
+      font-style: normal;
+      font-family: "obvia-wide", sans-serif;
+      font-weight: 600;
+      font-style: normal;
+      font-family: "lores-9-plus-narrow", sans-serif;
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    body {
+      width: 2160px;
+      height: 3840px;
+      max-width: 2160px;
+      max-height: 3840px;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #284CD9;
+      font-family: 'Roboto', sans-serif;
+      color: white;
+    }
+
+    .container {
+      position: relative;
+      animation: containerAnimation 1800s infinite;
+      width: 100vw;
+      min-width: 100vw;
+      height: 1920px;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    @keyframes slideAnimation {
+
+      0%,
+      50% {
+        bottom: 0;
+        top: auto;
+      }
+
+      51%,
+      100% {
+        top: 0;
+        bottom: auto;
+      }
+    }
+
+    @keyframes marqueeAnimation {
+
+      0%,
+      50% {
+        top: 0;
+      }
+
+      51%,
+      100% {
+        bottom: 0;
+        top: auto;
+      }
+    }
+
+    @keyframes containerAnimation {
+
+      0%,
+      50% {
+        top: 300px;
+        bottom: 0;
+      }
+
+      51%,
+      100% {
+        top: 50%;
+        bottom: auto;
+      }
+    }
+
+    .slideshow {
+      animation: slideAnimation 1800s infinite;
+      position: absolute !important;
+      background-repeat: no-repeat;
+      background-size: cover;
+      height: 1920px;
+      width: 2160px;
+      bottom: 0;
+      left: 50%;
+      margin-left: -1080px;
+      z-index: 990;
+    }
+
+    h1 {
+      font-family: "aktiv-grotesk", sans-serif;
+      font-weight: 800 !important;
+      font-style: bold;
+      font-size: 4.5rem;
+    }
+
+    .wifiText {
+      font-family: "obvia", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 2.5rem;
+    }
+
+    marquee {
+      position: absolute;
+      width: 100%;
+      animation: marqueeAnimation 1800s infinite;
+      font-family: "lores-9-plus-narrow", sans-serif;
+      font-weight: 700;
+      font-style: normal;
+      font-size: 191.716px;
+      text-transform: uppercase;
+      letter-spacing: 26.073px;
+    }
+
+    .time {
+      font-family: "lores-9-plus-narrow", sans-serif;
+      font-weight: 700;
+      font-style: normal;
+      font-size: 220.917px;
+      letter-spacing: 15.073px;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      font-family: "obvia-wide", sans-serif;
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    .box {
+      border: 6.391px solid #ffffff;
+      color: #ffffff;
+      background-color: #284CD9;
+    }
+
+    .box h3 {
+      text-align: center;
+    }
+
+    #qr-code,
+    #qr-code2 {
+      width: 150px;
+      height: 150px;
+    }
+
+    #mapContainer {
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    #roomsAndMap {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 998;
+    }
+
+    #mapImage {
+      width: 100%;
+      height: auto;
+      z-index: 998;
+    }
+
+
+    .roomDot {
+      position: absolute !important;
+      width: 40px;
+      height: 40px;
+      z-index: 999;
+    }
+
+    .available {
+      z-index: 999;
+      border-radius: 50%;
+      background-color: #284CD9;
+    }
+
+    .unavailable {
+      z-index: 999;
+      color: #284CD9;
+      font-size: 40px;
+      font-weight: bold;
+      line-height: 40px;
+      text-align: center;
+    }
+
+    .highlightedText {
+      font-family: "obvia", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .eventText {
+      font-family: "obvia", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    #eventsWrapper {
+      max-height: 500px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scroll {
+      animation: scroll 20s linear infinite;
+      position: relative;
+    }
+
+    @keyframes scroll {
+      0% {
+        top: 0;
+      }
+
+      100% {
+        top: -500%;
+        /* adjust this value based on the size of your events */
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="w-100">
+      <marquee id="MOTD" scrollamount="20">WELCOME TO D3 - MADE YOU LOOK</marquee>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-6">
+        <div class="row">
+          <div class="col">
+            <div id="startup" class="box m-2 p-3">
+              <h1>STARTUP OF<br>THE MOMENT</h1>
+              <p class="wifiText">Data loading...</p>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="text-center m-1 p-3">
+              <h2>Questions</h2>
+              <img id="qr-code" src="Mailto QR Code IMG URL" alt="QR Code">
+            </div>
+            <div class="text-center m-1 p-3">
+              <h2>Book a room</h2>
+              <img id="qr-code2" src="Booking Platform Website QR Code IMG URL" alt="QR Code 2">
+            </div>
+          </div>
+        </div>
+        <div class="box mt-5 m-2 p-3">
+          <h1>WIFI: <span class="wifiText">Until Oct 20</span></h1>
+          <h1>SSID: <span class="wifiText">ConcordiaGuest</span><br>
+            <h1>ACCESS CODE: <span class="wifiText">WAC-908924</span></h2>
+        </div>
+        <div id="events" class="box mt-5 m-2 p-3" style="z-index:999;">
+          <h1>EVENTS</h1>
+          <div id="eventsWrapper">
+            <span class="wifiText p-3">Data loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div id="mapContainer" class="box m-2 d-flex flex-column">
+          <div id="roomsAndMap">
+            <div id="rooms" class="mb-2">
+              <h1 class="p-3">AVAILABLE<br>ROOMS</h1>
+              <span class="wifiText p-3">Data loading...</span>
+            </div>
+            <img src="Floor Plan Image URL" alt="Map of rooms" id="mapImage">
+          </div>
+        </div>
+        <div id="time" class="time text-center mt-5 m-2 p-3"></div>
+      </div>
+    </div>
+  </div>
+  <div class="slideshow"></div>
+  <script>
+    let gifURLs = [
+  "URL 1",
+  "URL 2"
+  //... add more URLs as needed (make sure the last link does not have a comma after!)
+];
+
+function changeBackground() {
+  console.log('Changing background...')
+  let randomIndex = Math.floor(Math.random() * gifURLs.length);
+  let selectedGif = gifURLs[randomIndex];
+  let container = document.querySelector('.slideshow');
+  container.style.backgroundImage = 'url(' + selectedGif + ')';
+  container.style.backgroundSize = 'cover';
+  container.style.backgroundPosition = 'center';
+  container.style.backgroundRepeat = 'no-repeat';
+}
+    function updateMarquee() {
+  google.script.run.withSuccessHandler(function(result) {
+    document.getElementById('MOTD').textContent = result;
+  }).getMarqueeText();
+}
+function showRoomAvailability(availableRooms) {
+  var mapContainer = document.getElementById('mapContainer');
+
+  // Remove all existing room dots
+  var roomDots = document.getElementsByClassName('roomDot');
+  while (roomDots[0]) {
+    roomDots[0].parentNode.removeChild(roomDots[0]);
+  }
+
+  var roomPositions = {
+    'Room1': { top: '490px', left: '758px' },
+    'Room2': { top: '490px', left: '698px' },
+    'Room3': { top: '650px', left: '335px' },
+    'Room4': { top: '720px', left: '335px' },
+    'Room5': { top: '390px', left: '360px' }
+  };
+
+  for (var room in roomPositions) {
+    var roomElement = document.createElement('div');
+    roomElement.className = 'roomDot';
+    roomElement.style.top = roomPositions[room].top;
+    roomElement.style.left = roomPositions[room].left;
+
+    if (availableRooms.includes(room)) {
+      roomElement.classList.add('available');
+    } else {
+      roomElement.classList.add('unavailable');
+      roomElement.innerHTML = 'X';
+    }
+
+    mapContainer.appendChild(roomElement);
+  }
+}
+
+         function onSuccess2(now) {
+              var div = document.getElementById('time');
+              var today = new Date();
+              var hours = today.getHours();
+              var minutes = today.getMinutes();
+              // Check if minutes is less than 10 and then prepend '0' if it is.
+              minutes = minutes < 10 ? '0' + minutes : minutes;
+              var time = hours + " : " + minutes;
+              div.innerHTML = time;
+              }
+              
+              function onSuccess3(roomData) {
+                  var roomsDiv = document.getElementById('rooms');
+                      roomsDiv.innerHTML = "<h1 class='p-3'>AVAILABLE<br>ROOMS</h1>" + "<span class='wifiText p-3'>" + roomData.join(', ') + "</span>";
+                  }
+              
+                  function onSuccess4(startupData) {
+                      var div = document.getElementById('startup');
+                      div.innerHTML = "<h1>STARTUP OF<br>THE MOMENT</h1>" +
+                                      "<h2>" + startupData['project-title'] + "</h2>" +
+                                      "<h2>Founded by " + startupData['co-founders-first-name-globiflow'] + "</h2>" +
+                                      "<img id='qr-code-startup' src='https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" + encodeURIComponent(startupData['company-website']) + "' alt='QR Code Startup'>";
+                  }
+              
+function onSuccess5(eventsData) {
+  console.log("Received raw eventsData:", eventsData);
+  console.log("Type of received raw eventsData:", typeof eventsData);
+
+  try {
+    eventsData = JSON.parse(eventsData);
+    console.log("Parsed eventsData:", eventsData);
+  } catch (e) {
+    console.error("Failed to parse eventsData", e);
+    return;
+  }
+
+  if (!Array.isArray(eventsData)) {
+    console.error("eventsData is not an array.");
+    return;
+  }
+  
+  var div = document.getElementById('events');
+  var eventsWrapper = document.getElementById('eventsWrapper');
+  
+  if (eventsData.length === 0) {
+    div.innerHTML = "<h1>UPCOMING EVENTS</h1><span class='wifiText'>None for the next few days</span>";
+    return;
+  }
+  
+  div.innerHTML = "<h1>UPCOMING EVENTS</h1>";
+  eventsWrapper.innerHTML = ''; // Clear existing events
+
+  // Check if more than 4 events are present; if yes, apply the scrolling class
+  if (eventsData.length > 4) {
+    setInterval(scrollEvents, scrollSpeed * 1000);
+  }
+
+  eventsData.forEach(function(event) {
+    // Parsing start and end times to Date objects
+    event.start = new Date(event.start);
+    event.end = new Date(event.end);
+    
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const startTime = event.start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const endTime = event.end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+    let dateString = event.start.toLocaleDateString('en-US', options);
+    if (event.start.toDateString() === event.end.toDateString()) {
+      dateString += `, ${startTime} - ${endTime}`;
+    } else {
+      const endDateString = event.end.toLocaleDateString('en-US', options);
+      dateString += `, ${startTime} - ${endDateString}, ${endTime}`;
+    }
+
+    var eventElement = document.createElement('span');
+    eventElement.className = "wifiText eventText";
+    eventElement.innerHTML = `<strong>${event.title}</strong><br>` +
+                             `${dateString}<br>`;
+    eventsWrapper.appendChild(eventElement);
+  });
+
+  // Append eventsWrapper back to div if not already there
+  if (!div.contains(eventsWrapper)) {
+    div.appendChild(eventsWrapper);
+  }
+}
+
+window.onload = function() {
+
+  // Then run the initial data fetch functions
+  google.script.run.withSuccessHandler(onSuccess2).getTime();
+  google.script.run.withSuccessHandler(function(availableRooms) {
+    onSuccess3(availableRooms);
+    showRoomAvailability(availableRooms);
+  }).getAvailableRooms();
+  google.script.run.withSuccessHandler(onSuccess4).getRandomStartup();
+  google.script.run.withSuccessHandler(onSuccess5).getEventsCalendar();
+  google.script.run.withSuccessHandler(showRoomAvailability).getAvailableRooms();
+  updateMarquee();
+  changeBackground();
+
+  // Then set them to run every certain interval
+  setInterval(function() {
+    console.log("getting time...")
+    google.script.run.withSuccessHandler(onSuccess2).getTime();
+  }, 60000); // Every minute
+
+  setInterval(function() {
+    console.log("checking rooms...");
+    google.script.run.withSuccessHandler(function(availableRooms) {
+      onSuccess3(availableRooms);
+      showRoomAvailability(availableRooms);
+    }).getAvailableRooms();
+  }, 300000); // Every 5 minutes
+
+  setInterval(function() {
+    console.log("getting startup...")
+    google.script.run.withSuccessHandler(onSuccess4).getRandomStartup();
+  }, 600000); // Every 10 minutes
+
+  setInterval(function() {
+    console.log("fetching events...")
+    google.script.run.withSuccessHandler(onSuccess5).getEventsCalendar();
+  }, 1800000); // Every 30 minutes
+  
+  setInterval(changeBackground, 30000); // Every 30 seconds
+
+};
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
+  </script>
+</body>
+
+</html>

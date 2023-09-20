@@ -26,6 +26,19 @@ We needed a solution that provided unlimited user accounts due to our constant f
 - Additionally, the script will check the 'Bookings' tab to see if the user has already booked twice that day, and if they have, it will send them an email notifying them that they have reached their daily booking limit.
 ## Account Manager
 - Another Google Workspace account runs the script in the AccountManager folder (Created attached to the sheet via clicking Extensions -> Apps Script on the sheet). This handles sending out acceptance/denial emails to users who sign up for the platform.
+## Tablet Displays
+- The RoomTablets project is deployed as a Web App and embedded on a tablet outside of the room. The Web App is configured to display the room's status, and the iframe is used to hide the warning banner Google puts on any Google Apps Script Web App.
+    - These have 3 states: Green, currently free. Yellow, currently in a "Check-in" period (A +/- 10 minute window at the beginning of each event on the resource calendar). Red, currently booked.
+- The tablet displays will delete any event that is not checked in during the check-in period.
+## Dashboard
+- The dashboard is another Google Workspace account, operating similarly to the display tablets. It is a Google Apps Script Web App that pulls in data from various sources and displays it.
+- The styling is mostly hard coded, as it was designed to be displayed on a 4K vertical TV.
+- It features:
+    - A floorplan of the building with the status of each room.
+    - A MOTD section that can be updated by the admin.
+    - A list of events happening in the next 5 days.
+    - A clock.
+    - A feature of a random startup from the database.
 
 # Setup
 1. Create your Google Form. This form should collect Email, First Name, and Last Name.
