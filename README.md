@@ -1,3 +1,4 @@
+Disclaimer: This code is a bit messy and can use some organization, it was created as a side project between primary tasks, and slowly scaled to the point where refactoring is a headache.
 # Features
 - Unlimited user accounts (With permissions control)
 - Daily booking limits
