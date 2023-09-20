@@ -6,7 +6,7 @@
 - Room map with room status (Requires a little bit more setup)
 
 # Why it exists
-This hacky little project was made for District 3, Concordia's startup incubator as a stop gap, as no booking platform fit our use case perfectly and provided an acceptable amount of features for the price they demanded ($50/room per month? $3 per user per month?) 
+This hacky little project was made for District 3, Concordia University's startup incubator, as a stop gap. No booking platform fit our use case perfectly and provided an acceptable amount of features for the price they demanded ($50/room per month? $3 per user per month?) 
 
 We needed a solution that provided unlimited user accounts due to our constant flow of startup founders that also integrated well with Google Calendar resources, so our internal employees could continue to book rooms through Google Workspace workflows without fear of double booking. 
 
